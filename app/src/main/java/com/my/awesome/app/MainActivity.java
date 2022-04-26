@@ -10,6 +10,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.amazon.device.ads.AdRegistration;
+import com.amazon.device.ads.DTBAdNetwork;
+import com.amazon.device.ads.DTBAdNetworkInfo;
+import com.amazon.device.ads.MRAIDPolicy;
 import com.my.awesome.app.data.main.DemoMenuItem;
 import com.my.awesome.app.data.main.FooterType;
 import com.my.awesome.app.data.main.ListItem;
@@ -53,14 +57,15 @@ public class MainActivity
         recyclerView.setItemAnimator( new DefaultItemAnimator() );
         recyclerView.setAdapter( adapter );
 
+        // initialize Amazon sdk
+        AdRegistration.getInstance( "AMAZON_APP_ID", this );
+        AdRegistration.setAdNetworkInfo( new DTBAdNetworkInfo( DTBAdNetwork.MAX ) );
+        AdRegistration.setMRAIDSupportedVersions( new String[] { "1.0", "2.0", "3.0" } );
+        AdRegistration.setMRAIDPolicy( MRAIDPolicy.CUSTOM );
+
         AppLovinSdk.getInstance( this ).setMediationProvider( AppLovinMediationProvider.MAX );
-        AppLovinSdk.getInstance( this ).initializeSdk( new AppLovinSdk.SdkInitializationListener()
-        {
-            @Override
-            public void onSdkInitialized(final AppLovinSdkConfiguration config)
-            {
-            }
-        } );
+        AppLovinSdk.getInstance( this ).initializeSdk(config -> {
+        });
 
         interstitialAd = new MaxInterstitialAd( "30d77d0f6f295d5e", this );
         interstitialAd.loadAd();
